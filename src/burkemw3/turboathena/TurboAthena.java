@@ -1,3 +1,5 @@
+package burkemw3.turboathena;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 public class TurboAthena {
-    public static void main(String[] args) throws IOException, ParseException {
+    public static void main(String[] args) throws IOException, ParseException, ClassNotFoundException {
         // parse command line options
         Options options = new Options();
         Option classOption = new Option("c", "class-directory", true, "Directory that contains class files");
@@ -36,6 +38,19 @@ public class TurboAthena {
         ArrayList<String> modifiedClasses = new ArrayList<String>();
         modifiedClasses.addAll(Arrays.asList(line.getOptionValues(modifiedOption.getLongOpt())));
 
+        TreeSet<String> testsToRun = findTestsToRun(implementationDirectories,
+                testDirectories, modifiedClasses);
+
+        // print affected tests
+        for (String testToRun : testsToRun) {
+            System.out.println(testToRun);
+        }
+    }
+
+    public static TreeSet<String> findTestsToRun(
+            ArrayList<String> implementationDirectories,
+            ArrayList<String> testDirectories, ArrayList<String> modifiedClasses)
+            throws IOException, ClassNotFoundException {
         // iterate directory to build dependency graph & tests
         HashMap<String, HashSet<String>> dependencies = new HashMap<String, HashSet<String>>();
         HashSet<String> tests = new HashSet<String>();
@@ -70,15 +85,11 @@ public class TurboAthena {
                 }
             }
         }
-
-        // print affected tests
-        for (String testToRun : testsToRun) {
-            System.out.println(testToRun);
-        }
+        return testsToRun;
     }
 
     private static void iterateDirectory(File directory, HashMap<String, HashSet<String>> dependencies,
-            HashSet<String> tests, boolean isTestDirectory) throws IOException {
+            HashSet<String> tests, boolean isTestDirectory) throws IOException, ClassNotFoundException {
         if (false == directory.isDirectory()) {
             throw new RuntimeException("passed directory is not directory");
         }
