@@ -49,13 +49,12 @@ public class DependencyVisitor extends EmptyVisitor {
                 dependencies.get(providerName).add(dependentName);
             }
         }
-        for (JavaClass iface : _clazz.getAllInterfaces()) {
+        for (String iface : _clazz.getInterfaceNames()) {
             String providerName = _clazz.getClassName();
-            String dependentName = iface.getClassName();
             if (false == dependencies.containsKey(providerName)) {
                 dependencies.put(providerName, new HashSet<String>());
             }
-            dependencies.get(providerName).add(dependentName);
+            dependencies.get(providerName).add(iface);
         }
     }
 }
