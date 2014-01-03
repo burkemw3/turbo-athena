@@ -15,6 +15,10 @@ public class TestVisitor extends EmptyVisitor {
     }
 
     public void flagTests(HashSet<String> tests) {
+        if (true == _clazz.isAbstract()) {
+            return;
+        }
+
         ConstantPool pool = _clazz.getConstantPool();
         for (int i = 0; i < pool.getLength(); ++i) {
             Constant constant = pool.getConstant(i);
